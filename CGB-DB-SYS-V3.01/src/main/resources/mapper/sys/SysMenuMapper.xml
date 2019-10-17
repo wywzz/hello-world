@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysMenuDao">
+	<select id="findObjects" resultType="map">
+		<!-- 法案1 
+		select c.id,c.name,p.name parentName
+		from sys_menus c left join sys_menus p
+		on c.parentId=p.id -->
+		<!-- from的优先级最高 -->
+		<!-- 法案2 -->
+		select c.*,(select p.name parentName from sys_menus p where c.parentId=p.id) from sys_menus c
+	</select>
+	<insert id="insertObject" parameterType="com.cy.pj.sys.entity.SysMenu">
+		insert into sys_menus () 
+		values(
+			#{id},#{name},#{url},#{type},#{sort},#{note},#{parentId},#{permission},now(),now(),createdUser=#{createdUser},modifiedUser=#{modifiedUser}
+		)
+	</insert>
+	
+	<update id="updateObject" parameterType="com.cy.pj.sys.entity.SysMenu">
+		update sys_menus 
+		set 
+		name=#{name},
+		url=#{url},
+		type=#{type},
+		sort=#{sort},
+		note=#{note},
+		parentId=#{parentId},
+		permission=#{permission},
+		createdTime=now(),
+		modifiedTime=now(),
+		createdUser=#{createdUser},
+		modifiedUser=#{modifiedUser} 
+		where id=#{id}
+	</update>
+	
+</mapper>

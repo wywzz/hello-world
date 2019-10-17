@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysUserDao">
+	<resultMap type="com.cy.pj.common.vo.SysUserDeptVo"
+		id="sysUserDeptVo">
+		<association property="sysDept"
+		column="deptId" select="com.cy.pj.sys.dao.SysDeptDao.findById">
+		</association>
+	</resultMap>
+	<select id="findPageObjects" resultMap="sysUserDeptVo">
+		select *
+		<include refid="queryWhereId"/>
+		order by createdTime
+		limit #{startIndex},#{pageSize}
+	</select>
+	<sql id="queryWhereId">
+		from sys_users
+		<where>
+			<if test="username!=null and username!=''">
+				username like concat("%",#{username},"%")
+			</if>
+		</where>
+	</sql>
+	<select id="getRowCount" resultType="int">
+		select count(*)
+		<include refid="queryWhereId" />
+	</select>
+	<update id="doValidById">
+		update sys_users set valid=#{valid},modifiedUser=#{modifiedUser},modifiedTime=now() where id=#{id};
+	</update>
+</mapper>

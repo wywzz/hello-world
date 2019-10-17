@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysRoleDao">
+    <insert id="insertObject"
+          parameterType="com.cy.pj.sys.entity.SysRole"
+          useGeneratedKeys="true"
+          keyProperty="id">
+         
+         insert into sys_roles 
+         (id,name,note,createdTime,modifiedTime,
+         createdUser,modifiedUser) 
+         values
+         (null,#{name},#{note},now(),now(),
+         #{createdUser},#{modifiedUser})
+           
+    </insert>
+    <insert id="updateObject"
+          parameterType="com.cy.pj.sys.vo.SysRoleMenuVo"
+          useGeneratedKeys="true"
+          keyProperty="id">
+         
+         insert into sys_roles 
+         (id,name,note,createdTime,modifiedTime,
+         createdUser,modifiedUser) 
+         values
+         (null,#{name},#{note},now(),now(),
+         #{createdUser},#{modifiedUser})
+           
+    </insert>
+	<select id="findPageObjects"
+		resultType="com.cy.pj.sys.entity.SysRole">
+		<!-- 工作中最好不要用*,写完全 -->
+		select *
+		from sys_roles
+		<include refid="queryWhereId" />
+		order by createdTime desc
+		limit #{startIndex},#{pageSize}
+	</select>
+	<!-- 统计记录数 -->
+	<select id="getRowCount" resultType="int">
+		select count(*)
+		from sys_roles
+		<include refid="queryWhereId" />
+	</select>
+
+	<!-- 借助此元素对共性数据进行提取 -->
+	<sql id="queryWhereId">
+		<where>
+			<if test="name!=null and name!=''">
+				username like concat("%",#{name},"%")
+			</if>
+		</where>
+	</sql>
+	<resultMap type="com.cy.pj.sys.vo.SysRoleMenuVo"
+		id="sysRoleMenuVo">
+		<id property="id" column="id"/>
+		<collection property="menuIds"
+			select="com.cy.pj.sys.dao.SysRoleMenuDao.findMenuUdsByRoleId"
+			column="id">
+			<!-- 主建用id,其余用result -->
+		</collection>
+	</resultMap>
+	<select id="findObjectById" resultMap="sysRoleMenuVo">
+		select id,name,note from
+		sys_roles where id=#{id}
+	</select>
+	
+</mapper>
